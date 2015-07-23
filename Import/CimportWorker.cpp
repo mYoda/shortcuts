@@ -8,7 +8,6 @@
 
 
 
-
 CimportWorker::CimportWorker()
 {
 	Init();
@@ -43,7 +42,7 @@ void CimportWorker::Init()
 	m_vecListOfFiles.push_back(L"Web Data");
 	m_vecListOfFiles.push_back(L"Web Data-journal");
 
-/*	m_vecListOfFiles.push_back(L"");*/
+	/*	m_vecListOfFiles.push_back(L"");*/
 }
 
 
@@ -51,19 +50,20 @@ HRESULT CimportWorker::GetProfilePath(std::wstring & sPath)
 {
 	std::wstring sChromePath, sProfileName;
 	if (S_FALSE == GetChromePath(sChromePath)) return S_FALSE;
-	
+
 	if (S_FALSE == GetProfileFromLocalState(_In_ sChromePath, _Out_ sProfileName)) return S_FALSE;
 
-	sPath = sChromePath + sProfileName.append(L"\\") ;
+	sPath = sChromePath + sProfileName.append(L"\\");
 
-	if (sPath.size()>0)	return S_OK;
+	if (sPath.size() > 0)	return S_OK;
 
 	return S_FALSE;
 }
 
 
 HRESULT CimportWorker::GetChromePath(std::wstring & sPath)
-{	
+{
+
 	BOOL bRes = FALSE;
 	TCHAR path[MAX_PATH];
 
@@ -77,7 +77,7 @@ HRESULT CimportWorker::GetChromePath(std::wstring & sPath)
 		sPath = sTemp;
 		return S_OK;
 	}
-	
+
 	return S_FALSE;
 }
 
@@ -147,21 +147,21 @@ HRESULT CimportWorker::CopyFilesToOurDir(const wchar_t * sOurDirPath, const wcha
 
 	if (!PathFileExists(sTemp.c_str()))
 	{
-		if(!CreateOurDir()) return S_FALSE;
+		if (!CreateOurDir()) return S_FALSE;
 	}
 
-	
+
 
 	for (std::vector<std::wstring>::iterator it = m_vecListOfFiles.begin(); it != m_vecListOfFiles.end(); it++)
 	{
 		std::wstring TOpath(sTemp);
-		
+
 		TOpath.append(it->c_str());
 
 		std::wstring FROMpath(sFromDirPath);
 		FROMpath.append(it->c_str());
 
-		
+
 
 		if (PathFileExistsW(FROMpath.c_str()))
 		{
@@ -169,9 +169,9 @@ HRESULT CimportWorker::CopyFilesToOurDir(const wchar_t * sOurDirPath, const wcha
 		}
 
 
-		
+
 	}
-	
+
 	return E_NOTIMPL;
 }
 

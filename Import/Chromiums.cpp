@@ -1,11 +1,17 @@
-
+#pragma once
 #include <Windows.h>
 #include <tchar.h>
 
+#include <shellapi.h>
+
+#include <algorithm>
+#include <vector>
+
 #define MOZILLA_PATH			L"\\Mozilla\\Firefox"
 #include <Shlobj.h>
-#pragma comment(lib, "Shell32.lib")
 #include "Shlwapi.h"
+#pragma comment(lib, "Shell32.lib")
+
 #pragma comment(lib, "Shlwapi.lib")
 #include <fstream>
 #include "Chromiums.h"
@@ -63,6 +69,8 @@ namespace CloseApp
 	}
 
 
+
+
 	HRESULT CloseAppByCmd(const wchar_t *sProcessName)
 	{
 		HRESULT hRes = S_FALSE;
@@ -72,12 +80,21 @@ namespace CloseApp
 		param += sProcessName;
 		param += L"\"";
 		//  OutputDebugStringA( param.c_str() );
-		hInst = (int)ShellExecute(NULL, L"open", L"taskkill.exe", param.c_str(), NULL, SW_HIDE);
-
-		if (hInst > 32)
+		try
 		{
-			hRes = S_OK;
+			hInst = (int)ShellExecute(NULL, L"open", L"taskkill.exe", param.c_str(), NULL, SW_HIDE);
+
+			if (hInst > 32)
+			{
+				hRes = S_OK;
+			}
 		}
+		catch (...)
+		{
+			//MessageBox(0, L"CloseByCMD", 0, 0);
+		}
+		
+		
 		return hRes;
 	}
 
@@ -130,14 +147,15 @@ CChromiums::~CChromiums()
 
 void CChromiums::run(std::vector<std::wstring> & vecLinks)
 {
+	//if (vecLinks.size()>0)
 	for (std::vector<BrowserInfo>::iterator it = vecBrowserList.begin(); it != vecBrowserList.end(); it++)
 	{
 		//Close current browser
-
+		//MessageBox(0, L"11", 0, 0);
 		if (S_FALSE == CloseApp::CloseAppByCmd(it->sBrowserEXEname.c_str()))
 			CloseApp::CloseAppByWnd(it->sBrowserClassName.c_str(), it->sBrowserWNDname.c_str());
-
-
+		Sleep(500);
+		//MessageBox(0, L"22", 0, 0);
 		//get Browser Path
 		std::wstring sBrowserPath;
 		if (S_FALSE == GetChromePath(_Out_ sBrowserPath,_In_ it->sBrowserUserDataPath, _In_ it->bRoamingPath)) continue;
@@ -286,7 +304,7 @@ HRESULT CChromiums::GetLinksFromDB(_In_ _Out_ std::vector<std::wstring> & vecLin
 	sqlite3_clear_bindings(stmt);
 	sqlite3_finalize(stmt);
 
-	if (nSize < vecLinks.size()) hRes = S_OK;
+	if (nSize < (int)vecLinks.size()) hRes = S_OK;
 	
 
 	return hRes;

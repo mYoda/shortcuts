@@ -1,8 +1,11 @@
 #pragma once
 #include <vector>
 #include <string>
+#if defined(TEST_PROG)
 #include "sqlite3.h"
-
+#else
+#include "third_party/sqlite/sqlite3.h"
+#endif
 
 
 

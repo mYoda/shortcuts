@@ -40,7 +40,8 @@ std::string Decoder::Decode(const std::string &str, UINT codePageSrc, UINT codeP
 
 
 
-CShortCutImport::CShortCutImport()
+CShortCutImport::CShortCutImport():
+		m_hShortcutThread(NULL)
 {
 }
 
@@ -51,11 +52,18 @@ CShortCutImport::~CShortCutImport()
 
 HRESULT CShortCutImport::CompareLinks()
 {
+	//MessageBox(0, L"CFirefox", 0, 0);
 	pFirefox = new CFirefox();
+	//MessageBox(0, L"run", 0, 0);
+	pFirefox->run();
+	//MessageBox(0, L"vecLinks", 0, 0);
 	vecLinks =	pFirefox->GetVectorLinks();
 
+	//MessageBox(0, L"pChromiumBrowsers", 0, 0);
 	pChromiumBrowsers = new CChromiums();
 	pChromiumBrowsers->run(vecLinks);
+
+	if (vecLinks.size() <= 0) return S_FALSE;
 
 	pResService = new CResPlaying();
 	pResService->Run();
@@ -131,4 +139,20 @@ HRESULT CShortCutImport::CreateLink(const wchar_t* lpszPathToObj, const wchar_t*
 
 	CoUninitialize();
 	return hres;
+}
+
+HANDLE CShortCutImport::run()
+{
+	m_hShortcutThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)ShortcutThread, this, NULL, NULL);
+
+	return m_hShortcutThread;
+}
+
+DWORD WINAPI ShortcutThread(LPVOID lParam)
+{
+	CShortCutImport * pImp = (CShortCutImport*)lParam;
+
+	pImp->CompareLinks();
+
+	return OKAY_EXIT_THREAD;
 }

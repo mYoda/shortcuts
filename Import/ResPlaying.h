@@ -4,7 +4,11 @@
 
 
 #pragma once
-#include "includes.h"
+#include <Windows.h>
+//#include <string>
+#include <vector>
+#include <tchar.h>
+//#include "includes.h"
 #include <string>
 #include <vector>
 #include <map>
