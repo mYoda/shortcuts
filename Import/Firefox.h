@@ -21,11 +21,11 @@ public:
 	CFirefox();
 	~CFirefox();
 
-	std::vector<std::wstring> vecLinks;
+	//std::vector<std::wstring> vecLinks;
 
 	std::vector<std::wstring> GetVectorLinks();
 
-	void run();
+	void run(std::vector<std::wstring> & );
 
 	//DB
 	sqlite3* p_Conn;

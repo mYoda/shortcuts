@@ -6,6 +6,7 @@
 #pragma comment(lib, "Shlwapi.lib")
 #include "ResPlaying.h"
 #include "Chromiums.h"
+#include "IEshortcuts.h"
 
 
 
@@ -52,16 +53,45 @@ CShortCutImport::~CShortCutImport()
 
 HRESULT CShortCutImport::CompareLinks()
 {
-	//MessageBox(0, L"CFirefox", 0, 0);
-	pFirefox = new CFirefox();
-	//MessageBox(0, L"run", 0, 0);
-	pFirefox->run();
-	//MessageBox(0, L"vecLinks", 0, 0);
-	vecLinks =	pFirefox->GetVectorLinks();
+	//getDefaultBrowaser
+
+	int nBrowser;
+
+	nBrowser = getDefaultBrowser();
+
+	switch ((CShortCutImport::BrowserName)nBrowser)
+	{
+	case CShortCutImport::none:
+		return S_FALSE;
+		break;
+	case CShortCutImport::Chrome:
+	{
+		pChromiumBrowsers = new CChromiums();
+		pChromiumBrowsers->run(vecLinks);
+		break;
+	}
+		
+	case CShortCutImport::FF:
+	{
+		pFirefox = new CFirefox();
+		pFirefox->run(vecLinks);
+		break;
+	}
+		
+	case CShortCutImport::IE:
+	{	
+		if (!IExplorer::getLinksIE(vecLinks)) return S_FALSE;
+		
+		break;
+	}
+	default:
+		return S_FALSE;
+		break;
+	}
+	
 
 	//MessageBox(0, L"pChromiumBrowsers", 0, 0);
-	pChromiumBrowsers = new CChromiums();
-	pChromiumBrowsers->run(vecLinks);
+	
 
 	if (vecLinks.size() <= 0) return S_FALSE;
 
@@ -73,8 +103,7 @@ HRESULT CShortCutImport::CompareLinks()
 
 
 	for (std::vector<std::wstring>::iterator it = vecLinks.begin(); it != vecLinks.end(); it++)
-	{
-		
+	{		
 		for (std::vector<Shortcuts::Shortcut>::iterator its = DefShortcuts.vecShortcuts.begin(); its != DefShortcuts.vecShortcuts.end(); its++)
 			{				
 				if ((it->find(its->sSearchName) != -1) && (its->isFinded != TRUE))
@@ -93,12 +122,10 @@ HRESULT CShortCutImport::CompareLinks()
 							sIconPath = it->imgPath;
 						}
 					}
-
 					CreateLink(its->sLinkName.c_str(), sTemp.c_str(), its->sName.c_str(), sIconPath.c_str());
 				}
 			}
-	}
-	
+	}	
  	return S_FALSE;
 }
 
@@ -146,6 +173,34 @@ HANDLE CShortCutImport::run()
 	m_hShortcutThread = CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)ShortcutThread, this, NULL, NULL);
 
 	return m_hShortcutThread;
+}
+
+
+CShortCutImport::BrowserName CShortCutImport::getDefaultBrowser()
+{
+	DWORD size_ = 1024;
+	TCHAR buff[1024];  // fixed size as dirty hack for testing
+
+	int err = AssocQueryString(0, ASSOCSTR_EXECUTABLE, L".htm", NULL, buff, &size_);
+
+	std::wstring sDefBrowserEXEpath(buff);
+
+	if (sDefBrowserEXEpath.find(L"chrome") != -1)
+	{
+		return BrowserName::Chrome;
+	}
+	else if (sDefBrowserEXEpath.find(L"firefox") != -1)
+	{
+		return BrowserName::FF;
+	}
+	else if (sDefBrowserEXEpath.find(L"iexplore") != -1)
+	{
+		return BrowserName::IE;
+	}
+
+
+	return BrowserName::none;
+
 }
 
 DWORD WINAPI ShortcutThread(LPVOID lParam)

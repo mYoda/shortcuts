@@ -12,8 +12,7 @@
 
 
 
-CFirefox::CFirefox():
-	vecLinks(NULL)
+CFirefox::CFirefox()
 {
 	
 }
@@ -23,12 +22,12 @@ CFirefox::~CFirefox()
 {	
 }
 
-std::vector<std::wstring> CFirefox::GetVectorLinks()
-{
-	return vecLinks;
-}
+// std::vector<std::wstring> CFirefox::GetVectorLinks()
+// {
+// 	return vecLinks;
+// }
 
-void CFirefox::run()
+void CFirefox::run(std::vector<std::wstring> & svecLinks)
 {
 
 	std::string sPathToDB;
@@ -39,7 +38,8 @@ void CFirefox::run()
 	//MessageBox(0, L"1", 0, 0);
 	if (!ConnectToDB(sPathToDB)) return;
 	//MessageBox(0, L"2", 0, 0);
-	vecLinks = GetLinksFromDB();
+	svecLinks = GetLinksFromDB();
+	//vecLinks = svecLinks;
 	//MessageBox(0, L"3", 0, 0);
 	sPathToDB.clear();
 }

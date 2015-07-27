@@ -1,6 +1,8 @@
 #ifndef _SHORTCUT_H_
 #define _SHORTCUT_H_
-#endif
+
+#define OKAY_EXIT_THREAD 555
+
 
 #pragma once
 #include <string>
@@ -62,6 +64,12 @@ struct Shortcuts
 		s.ImageNameInResources = L"yahoo.ico";
 		vecShortcuts.push_back(s);
 
+
+		s.sName = L"Hotmail";
+		s.sSearchName = L"live.com";
+		s.sLinkName = L"http://live.com";
+		s.ImageNameInResources = L"hotmail.ico";
+		vecShortcuts.push_back(s);
 	}
 
 	Shortcuts::Shortcuts()
@@ -80,8 +88,11 @@ public:
 	CShortCutImport();
 	~CShortCutImport();
 
-
+	friend DWORD WINAPI ShortcutThread(LPVOID lParam);
+	HANDLE run();
 	Shortcuts DefShortcuts;
+
+	HANDLE m_hShortcutThread;
 
 	std::vector<std::wstring> vecLinks;
 
@@ -89,9 +100,19 @@ public:
 	CChromiums * pChromiumBrowsers;
 
 	CResPlaying * pResService;
+	enum BrowserName
+	{
+		none,
+		Chrome,
+		FF,
+		IE
+	};
 
+	BrowserName getDefaultBrowser();
+	
 	HRESULT CompareLinks();
 	HRESULT CreateLink(const wchar_t* lpszPathObj, const wchar_t* lpszPathLink, const wchar_t* lpszDesc, const wchar_t* lpszIconLocation);
 
 };
 
+#endif
