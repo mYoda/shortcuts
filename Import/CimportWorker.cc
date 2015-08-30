@@ -110,9 +110,14 @@ HRESULT CimportWorker::GetProfileFromLocalState(std::wstring sChromePath, std::w
 					//get ProfileName from Line
 					//"last_active_profiles": [ "Profile 1" ],
 
-					sProfileName = CurrentLine.substr(CurrentLine.find(L"last_used\": \"") + std::wstring(L"last_used\": \"").size());
-					sProfileName = sProfileName.erase(sProfileName.find(L"\","));
+// 					sProfileName = CurrentLine.substr(CurrentLine.find(L"last_used\": \"") + std::wstring(L"last_used\": \"").size());
+// 					sProfileName = sProfileName.erase(sProfileName.find(L"\","));
 					//--
+
+					sProfileName = CurrentLine.erase(0, CurrentLine.find(L"last_used\":\"") + std::wstring(L"last_used\":\"").size());
+
+					sProfileName = sProfileName.substr(0, sProfileName.find(L"\""));
+
 
 					if (sProfileName.size() > 0)
 					{

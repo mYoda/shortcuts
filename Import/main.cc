@@ -17,6 +17,7 @@
 
 #pragma comment (lib, "Shlwapi.lib")
 
+#include "LinksPlaying.h"
 
 
 
@@ -36,7 +37,9 @@ int WinMain( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, __in LP
 	//openAction->Enabled = ((err == S_OK) || (err == S_FALSE)) && (size > 0);
 
 	
+	CLinksPlaying * pLinks = new CLinksPlaying();
 
+	pLinks->run();
 	
 	
 

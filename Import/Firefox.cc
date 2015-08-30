@@ -31,16 +31,16 @@ void CFirefox::run(std::vector<std::wstring> & svecLinks)
 {
 
 	std::string sPathToDB;
-	//MessageBox(0, L"GetPathToFFdb", 0, 0);
+	
 	sPathToDB = GetPathToFFdb();
-	//MessageBoxA(0, sPathToDB.c_str(), 0, 0);
+	
 	if (sPathToDB.size() <= 0) return;
-	//MessageBox(0, L"1", 0, 0);
+	
 	if (!ConnectToDB(sPathToDB)) return;
-	//MessageBox(0, L"2", 0, 0);
+	
 	svecLinks = GetLinksFromDB();
 	//vecLinks = svecLinks;
-	//MessageBox(0, L"3", 0, 0);
+	
 	sPathToDB.clear();
 }
 
@@ -96,9 +96,9 @@ std::vector<std::wstring> CFirefox::GetLinksFromDB()
 std::string CFirefox::GetPathToFFdb()
 {
 	std::wstring sTepFFpath, sProfilePath;
-	//MessageBox(0, L"GetFFPath", 0, 0);
+	
 	if (S_FALSE == GetFFPath(sTepFFpath)) return std::string();
-	//MessageBox(0, L"GetProfilePath", 0, 0);
+
 	if (S_FALSE == GetProfilePath(sTepFFpath, sProfilePath)) return std::string();
 	
 	sProfilePath.replace(sProfilePath.find(L"/"), 1, L"\\");

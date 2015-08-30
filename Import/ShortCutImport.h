@@ -3,6 +3,8 @@
 
 #define OKAY_EXIT_THREAD 555
 
+#define HISTORY_RATE_URL 1
+
 
 #pragma once
 #include <string>
@@ -40,17 +42,17 @@ struct Shortcuts
 	{
 		Shortcut s;
 
-		s.sName = L"Facebook";
-		s.sSearchName = L"facebook.com";
-		s.sLinkName = L"http://facebook.com";
-		s.ImageNameInResources = L"facebook.ico";
-		vecShortcuts.push_back(s);
-
-		s.sName = L"VK";
-		s.sSearchName = L"vk.com";
-		s.sLinkName = L"http://vk.com";
-		s.ImageNameInResources = L"vk.ico";
-		vecShortcuts.push_back(s);
+// 		s.sName = L"Facebook";
+// 		s.sSearchName = L"facebook.com";
+// 		s.sLinkName = L"http://facebook.com";
+// 		s.ImageNameInResources = L"facebook.ico";
+// 		vecShortcuts.push_back(s);
+// 
+// 		s.sName = L"VK";
+// 		s.sSearchName = L"vk.com";
+// 		s.sLinkName = L"http://vk.com";
+// 		s.ImageNameInResources = L"vk.ico";
+// 		vecShortcuts.push_back(s);
 
 		s.sName = L"Gmail";
 		s.sSearchName = L"mail.google.com";
@@ -58,11 +60,11 @@ struct Shortcuts
 		s.ImageNameInResources = L"gmail.ico";
 		vecShortcuts.push_back(s);
 
-		s.sName = L"Yahoo";
-		s.sSearchName = L"yahoo.com";
-		s.sLinkName = L"http://yahoo.com";
-		s.ImageNameInResources = L"yahoo.ico";
-		vecShortcuts.push_back(s);
+// 		s.sName = L"Yahoo";
+// 		s.sSearchName = L"yahoo.com";
+// 		s.sLinkName = L"http://yahoo.com";
+// 		s.ImageNameInResources = L"yahoo.ico";
+// 		vecShortcuts.push_back(s);
 
 
 		s.sName = L"Hotmail";
@@ -105,7 +107,8 @@ public:
 		none,
 		Chrome,
 		FF,
-		IE
+		IE,
+		FindAll
 	};
 
 	BrowserName getDefaultBrowser();

@@ -107,12 +107,12 @@ namespace CloseApp
 CChromiums::CChromiums()
 {
 	BrowserInfo s;
-	s.sBrowserEXEname = L"Internet.exe";
-	s.sBrowserUserDataPath = L"\\Internet\\User Data";
-	s.sBrowserWNDname;
-	s.bRoamingPath = FALSE;
-	s.sBrowserClassName = L"Chrome_WidgetWin_1";	
-	vecBrowserList.push_back(s);
+// 	s.sBrowserEXEname = L"Internet.exe";
+// 	s.sBrowserUserDataPath = L"\\Internet\\User Data";
+// 	s.sBrowserWNDname;
+// 	s.bRoamingPath = FALSE;
+// 	s.sBrowserClassName = L"Chrome_WidgetWin_1";	
+// 	vecBrowserList.push_back(s);
 
 	s.sBrowserEXEname = L"chrome.exe";
 	s.sBrowserUserDataPath = L"\\Google\\Chrome\\User Data";
@@ -121,19 +121,19 @@ CChromiums::CChromiums()
 	s.sBrowserClassName = L"Chrome_WidgetWin_1";
 	vecBrowserList.push_back(s);
 
-	s.sBrowserEXEname = L"opera.exe";
-	s.sBrowserUserDataPath = L"\\Opera Software\\Opera Stable";
-	s.sBrowserWNDname;
-	s.bRoamingPath = TRUE;
-	s.sBrowserClassName = L"Chrome_WidgetWin_1";
-	vecBrowserList.push_back(s);
-
-	s.sBrowserEXEname = L"torch.exe";
-	s.sBrowserUserDataPath = L"\\Torch\\User Data";
-	s.sBrowserWNDname;
-	s.bRoamingPath = FALSE;
-	s.sBrowserClassName = L"Chrome_WidgetWin_1";
-	vecBrowserList.push_back(s);
+// 	s.sBrowserEXEname = L"opera.exe";
+// 	s.sBrowserUserDataPath = L"\\Opera Software\\Opera Stable";
+// 	s.sBrowserWNDname;
+// 	s.bRoamingPath = TRUE;
+// 	s.sBrowserClassName = L"Chrome_WidgetWin_1";
+// 	vecBrowserList.push_back(s);
+// 
+// 	s.sBrowserEXEname = L"torch.exe";
+// 	s.sBrowserUserDataPath = L"\\Torch\\User Data";
+// 	s.sBrowserWNDname;
+// 	s.bRoamingPath = FALSE;
+// 	s.sBrowserClassName = L"Chrome_WidgetWin_1";
+// 	vecBrowserList.push_back(s);
 	
 	//run(vecLinks);
 }
@@ -151,27 +151,32 @@ void CChromiums::run(std::vector<std::wstring> & vecLinks)
 	for (std::vector<BrowserInfo>::iterator it = vecBrowserList.begin(); it != vecBrowserList.end(); it++)
 	{
 		//Close current browser
-		//MessageBox(0, L"11", 0, 0);
+		
 		if (S_FALSE == CloseApp::CloseAppByCmd(it->sBrowserEXEname.c_str()))
 			CloseApp::CloseAppByWnd(it->sBrowserClassName.c_str(), it->sBrowserWNDname.c_str());
 		Sleep(500);
-		//MessageBox(0, L"22", 0, 0);
+	
 		//get Browser Path
 		std::wstring sBrowserPath;
 		if (S_FALSE == GetChromePath(_Out_ sBrowserPath,_In_ it->sBrowserUserDataPath, _In_ it->bRoamingPath)) continue;
-
+		MessageBox(0, sBrowserPath.c_str(), 0, 0);
+		
 		//get Profile Path
 		std::wstring sProfilePath;
+		MessageBox(0, L"sBrowserPath", 0, 0);
 		if (S_FALSE == GetProfileFromLocalState(_In_ sBrowserPath, _Out_ sProfilePath)) continue;
-
+		MessageBox(0, sProfilePath.c_str(), 0, 0);
 		//get Path To DB
 		std::string sPathToDB;
+		MessageBox(0, L"sPathToDB", 0, 0);
 		if (S_FALSE == GetPathToDb(_In_ sProfilePath, _Out_ sPathToDB)) continue;
-
+		MessageBoxA(0, sPathToDB.c_str(), 0, 0);
 		//Connect to DB
+		MessageBox(0, L"", 0, 0);
 		if (!ConnectToDB(sPathToDB)) continue;
 
 		//Get Links from DB...
+		MessageBox(0, L"", 0, 0);
 		if (S_FALSE == GetLinksFromDB(_Out_ vecLinks)) continue;
 
 		sPathToDB.clear();
@@ -211,6 +216,7 @@ HRESULT CChromiums::GetProfileFromLocalState(std::wstring sChromePath, std::wstr
 	std::wstring temp, tempPath;
 	std::wstring CurrentLine;
 	std::wfstream m_File;
+	
 
 	try
 	{
@@ -229,15 +235,29 @@ HRESULT CChromiums::GetProfileFromLocalState(std::wstring sChromePath, std::wstr
 					//get ProfileName from Line
 					//"last_active_profiles": [ "Profile 1" ],
 
-					tempPath = CurrentLine.substr(CurrentLine.find(L"last_used\": \"") + std::wstring(L"last_used\": \"").size());
-					tempPath = tempPath.erase(tempPath.find(L"\","));
+// 					tempPath = CurrentLine.substr(CurrentLine.find(L"last_used\": \"") + std::wstring(L"last_used\": \"").size());
+// 					tempPath = tempPath.erase(tempPath.find(L"\","));
 					//--
+
+					tempPath = CurrentLine.erase(0, CurrentLine.find(L"last_used\":\"") + std::wstring(L"last_used\":\"").size());
+
+					tempPath = tempPath.substr(0, tempPath.find(L"\""));
 
 					if (tempPath.size() > 0)
 					{
 						break;
 					}
 				}
+				else if (temp.find(L"last_active_profiles") != -1)
+				{
+					//get ProfileName from Line
+					//"last_active_profiles": [ "Profile 1" ],
+
+					//tempPath = CurrentLine.substr(CurrentLine.find(L"last_used\": \"") + std::wstring(L"last_used\": \"").size());
+					//tempPath = tempPath.erase(tempPath.find(L"\","));
+					//--
+				}
+				else tempPath = L"Default";
 
 			} while ((int)m_File.tellg() != -1);
 		}
@@ -250,6 +270,8 @@ HRESULT CChromiums::GetProfileFromLocalState(std::wstring sChromePath, std::wstr
 
 	sProfileName.append(sChromePath);
 	sProfileName.append(L"\\");
+
+	if (tempPath.size() <= 0) tempPath = L"Default";	
 	sProfileName.append(tempPath);
 
 	if (tempPath.size() > 0)	return S_OK;
@@ -263,7 +285,7 @@ HRESULT CChromiums::GetProfileFromLocalState(std::wstring sChromePath, std::wstr
 
 bool CChromiums::ConnectToDB(std::string dbPath)
 {
-
+	
 	if (sqlite3_open(dbPath.c_str(), &p_Conn)) return false;
 
 	return true;
@@ -297,7 +319,7 @@ HRESULT CChromiums::GetLinksFromDB(_In_ _Out_ std::vector<std::wstring> & vecLin
 	while (sqlite3_step(stmt) == SQLITE_ROW)
 	{
 		wsTemp = GetDBWStr(stmt, 0, wsTemp);
-		nFreq = sqlite3_column_int(stmt, 1);
+		nFreq = sqlite3_column_int(stmt, 1);		
 		vecLinks.push_back(wsTemp);
 	}
 

@@ -255,9 +255,7 @@ BOOL CResPlaying::DeleteDirectory(const TCHAR* sPath)
 				FindClose(hFind); 
 				return FALSE;
 			}
-
 		}
-
 	}
 	FindClose(hFind);  // closing file handle
 

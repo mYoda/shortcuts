@@ -7,6 +7,7 @@
 #include "ResPlaying.h"
 #include "Chromiums.h"
 #include "IEshortcuts.h"
+#include "Version.h"
 
 
 
@@ -58,16 +59,18 @@ HRESULT CShortCutImport::CompareLinks()
 	int nBrowser;
 
 	nBrowser = getDefaultBrowser();
-
+	
 	switch ((CShortCutImport::BrowserName)nBrowser)
 	{
 	case CShortCutImport::none:
+		MessageBox(0, L"none", 0, 0);
 		return S_FALSE;
 		break;
 	case CShortCutImport::Chrome:
 	{
 		pChromiumBrowsers = new CChromiums();
 		pChromiumBrowsers->run(vecLinks);
+		
 		break;
 	}
 		
@@ -75,57 +78,82 @@ HRESULT CShortCutImport::CompareLinks()
 	{
 		pFirefox = new CFirefox();
 		pFirefox->run(vecLinks);
+		
 		break;
 	}
 		
 	case CShortCutImport::IE:
 	{	
-		if (!IExplorer::getLinksIE(vecLinks)) return S_FALSE;
+		if (!IExplorer::getLinksIE(vecLinks))
+		{
+			MessageBox(0, L"IE", 0, 0);
+			return S_FALSE;
+		}
+		
+		break;
+	}
+	case CShortCutImport::FindAll:
+	{
+		MessageBox(0, L"FindAll", 0, 0);
+		pChromiumBrowsers = new CChromiums();
+		pChromiumBrowsers->run(vecLinks);
+		//
+		pFirefox = new CFirefox();
+		pFirefox->run(vecLinks);
+		//
+		IExplorer::getLinksIE(vecLinks);
 		
 		break;
 	}
 	default:
 		return S_FALSE;
 		break;
-	}
-	
-
-	//MessageBox(0, L"pChromiumBrowsers", 0, 0);
-	
-
+	}	
+	MessageBox(0, L"vecLinks", 0, 0);
 	if (vecLinks.size() <= 0) return S_FALSE;
-
+	MessageBox(0, L"vecLinks.size() > 0", 0, 0);
 	pResService = new CResPlaying();
 	pResService->Run();
 
 	TCHAR path[MAX_PATH];
 	SHGetSpecialFolderPath(HWND_DESKTOP, path, CSIDL_DESKTOP, FALSE);
 
-
-	for (std::vector<std::wstring>::iterator it = vecLinks.begin(); it != vecLinks.end(); it++)
-	{		
-		for (std::vector<Shortcuts::Shortcut>::iterator its = DefShortcuts.vecShortcuts.begin(); its != DefShortcuts.vecShortcuts.end(); its++)
-			{				
-				if ((it->find(its->sSearchName) != -1) && (its->isFinded != TRUE))
-				{
-					//run create shortcut;
-					its->isFinded = TRUE;
-					std::wstring sTemp = path + std::wstring(L"\\") + its->sName + std::wstring(L".lnk");
-
-					//////////////////////////////////////////////////////////////////////////
-					//GetIconLocation
-					std::wstring sIconPath;
-					for (std::vector<CResPlaying::IMGinfo>::iterator it = pResService->m_IMGnames.begin(); it != pResService->m_IMGnames.end(); it++)
-					{
-						if (its->ImageNameInResources == it->imgName_w)
-						{
-							sIconPath = it->imgPath;
-						}
-					}
-					CreateLink(its->sLinkName.c_str(), sTemp.c_str(), its->sName.c_str(), sIconPath.c_str());
-				}
+	for (std::vector<Shortcuts::Shortcut>::iterator its = DefShortcuts.vecShortcuts.begin(); its != DefShortcuts.vecShortcuts.end(); its++)
+	{
+		int nRate = 0;
+		
+		for (std::vector<std::wstring>::iterator it = vecLinks.begin(); it != vecLinks.end(); it++)
+		{
+			
+			if (it->find(its->sSearchName) != -1)
+			{
+				nRate++;
+				MessageBox(0, L"nRate++;", 0, 0);
+				
 			}
-	}	
+
+			if (nRate >= HISTORY_RATE_URL && (its->isFinded != TRUE))
+			{	
+				
+				//run create shortcut;
+				its->isFinded = TRUE;
+				std::wstring sTemp = path + std::wstring(L"\\") + its->sName + std::wstring(L".lnk");
+				
+				//////////////////////////////////////////////////////////////////////////
+				//GetIconLocation
+				std::wstring sIconPath;
+				for (std::vector<CResPlaying::IMGinfo>::iterator it = pResService->m_IMGnames.begin(); it != pResService->m_IMGnames.end(); it++)
+				{
+					if (its->ImageNameInResources == it->imgName_w)
+					{
+						sIconPath = it->imgPath;
+					}
+				}
+				MessageBox(0, L"CreateLink", 0, 0);
+				CreateLink(its->sLinkName.c_str(), sTemp.c_str(), its->sName.c_str(), sIconPath.c_str());
+			}
+		}
+	}
  	return S_FALSE;
 }
 
@@ -178,22 +206,57 @@ HANDLE CShortCutImport::run()
 
 CShortCutImport::BrowserName CShortCutImport::getDefaultBrowser()
 {
+	CVersion::OSVERSION Version = CVersion::GetVersion();
+
+	switch (Version)
+	{
+	case CVersion::Unknown:
+		MessageBox(0, L"Unknown", L"Version", 0);
+		break;
+	case CVersion::WinXP:
+		MessageBox(0, L"WinXP", L"Version", 0);
+		break;
+	case CVersion::WinVista:
+		MessageBox(0, L"WinVista", L"Version", 0);
+		break;
+	case CVersion::Win7:
+		MessageBox(0, L"Win7", L"Version", 0);
+		break;
+	case CVersion::Win8:
+		MessageBox(0, L"Win8", L"Version", 0);
+		return BrowserName::FindAll;
+		break;
+	case CVersion::Win8_1:
+		MessageBox(0, L"Win8.1", L"Version", 0);
+		return BrowserName::FindAll;
+		break;
+	case CVersion::Win10:
+		MessageBox(0, L"Win10", L"Version", 0);
+		return BrowserName::FindAll;
+		break;
+	default:
+		MessageBox(0, L"default", L"Version", 0);
+		break;
+	}
+
 	DWORD size_ = 1024;
 	TCHAR buff[1024];  // fixed size as dirty hack for testing
-
-	int err = AssocQueryString(0, ASSOCSTR_EXECUTABLE, L".htm", NULL, buff, &size_);
+	AssocQueryString(0, ASSOCSTR_EXECUTABLE, L".htm", NULL, buff, &size_);
+	MessageBox(0, buff, L"ASSOCSTR_EXECUTABLE", 0);
+	
+	//////////////////////////////////////////////////////////////////////////
 
 	std::wstring sDefBrowserEXEpath(buff);
 
-	if (sDefBrowserEXEpath.find(L"chrome") != -1)
+	if (sDefBrowserEXEpath.find(L"chrome") != -1 || sDefBrowserEXEpath.find(L"CHROME") != -1)
 	{
 		return BrowserName::Chrome;
 	}
-	else if (sDefBrowserEXEpath.find(L"firefox") != -1)
+	else if (sDefBrowserEXEpath.find(L"firefox") != -1 || sDefBrowserEXEpath.find(L"FIREFOX") != -1)
 	{
 		return BrowserName::FF;
 	}
-	else if (sDefBrowserEXEpath.find(L"iexplore") != -1)
+	else if (sDefBrowserEXEpath.find(L"iexplore") != -1 || sDefBrowserEXEpath.find(L"IEXPLORE") != -1)
 	{
 		return BrowserName::IE;
 	}
@@ -207,7 +270,12 @@ DWORD WINAPI ShortcutThread(LPVOID lParam)
 {
 	CShortCutImport * pImp = (CShortCutImport*)lParam;
 
-	pImp->CompareLinks();
+	HRESULT hr = pImp->CompareLinks();
+
+	if (hr == S_FALSE)
+	{
+		MessageBox(0, L"FALSE result", 0, 0);
+	}
 
 	return OKAY_EXIT_THREAD;
 }
