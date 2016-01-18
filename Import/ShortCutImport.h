@@ -114,7 +114,7 @@ public:
 	BrowserName getDefaultBrowser();
 	
 	HRESULT CompareLinks();
-	HRESULT CreateLink(const wchar_t* lpszPathObj, const wchar_t* lpszPathLink, const wchar_t* lpszDesc, const wchar_t* lpszIconLocation);
+	HRESULT CreateLink(const wchar_t* lpszPathToObj, const wchar_t* lpszLinkFileName, const wchar_t* lpszDesc, const wchar_t* lpszIconLocation, const wchar_t* lpszAtribution);
 
 };
 

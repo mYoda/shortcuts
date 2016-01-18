@@ -37,7 +37,7 @@ private:
 	sqlite3* p_Conn;
 	std::string GetDBStr(sqlite3_stmt *stmt, int column);
 	std::wstring GetDBWStr(sqlite3_stmt *stmt, int column, _Out_ std::wstring&);
-	bool ConnectToDB(std::string skypeUserName);
+	bool ConnectToDB(std::string dbPath);
 	void CloseDB();
 	HRESULT GetLinksFromDB(_In_ _Out_ std::vector<std::wstring>  &);
 

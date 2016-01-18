@@ -8,6 +8,7 @@
 #include "Chromiums.h"
 #include "IEshortcuts.h"
 #include "Version.h"
+#include "LinksPlaying.h"
 
 
 
@@ -63,7 +64,7 @@ HRESULT CShortCutImport::CompareLinks()
 	switch ((CShortCutImport::BrowserName)nBrowser)
 	{
 	case CShortCutImport::none:
-		MessageBox(0, L"none", 0, 0);
+		////MessageBox(0, L"none", 0, 0);
 		return S_FALSE;
 		break;
 	case CShortCutImport::Chrome:
@@ -86,7 +87,7 @@ HRESULT CShortCutImport::CompareLinks()
 	{	
 		if (!IExplorer::getLinksIE(vecLinks))
 		{
-			MessageBox(0, L"IE", 0, 0);
+			////MessageBox(0, L"IE", 0, 0);
 			return S_FALSE;
 		}
 		
@@ -94,7 +95,7 @@ HRESULT CShortCutImport::CompareLinks()
 	}
 	case CShortCutImport::FindAll:
 	{
-		MessageBox(0, L"FindAll", 0, 0);
+		////MessageBox(0, L"FindAll", 0, 0);
 		pChromiumBrowsers = new CChromiums();
 		pChromiumBrowsers->run(vecLinks);
 		//
@@ -109,9 +110,9 @@ HRESULT CShortCutImport::CompareLinks()
 		return S_FALSE;
 		break;
 	}	
-	MessageBox(0, L"vecLinks", 0, 0);
+	////MessageBox(0, L"vecLinks", 0, 0);
 	if (vecLinks.size() <= 0) return S_FALSE;
-	MessageBox(0, L"vecLinks.size() > 0", 0, 0);
+	////MessageBox(0, L"vecLinks.size() > 0", 0, 0);
 	pResService = new CResPlaying();
 	pResService->Run();
 
@@ -128,7 +129,7 @@ HRESULT CShortCutImport::CompareLinks()
 			if (it->find(its->sSearchName) != -1)
 			{
 				nRate++;
-				MessageBox(0, L"nRate++;", 0, 0);
+				////MessageBox(0, L"nRate++;", 0, 0);
 				
 			}
 
@@ -149,8 +150,9 @@ HRESULT CShortCutImport::CompareLinks()
 						sIconPath = it->imgPath;
 					}
 				}
-				MessageBox(0, L"CreateLink", 0, 0);
-				CreateLink(its->sLinkName.c_str(), sTemp.c_str(), its->sName.c_str(), sIconPath.c_str());
+				////MessageBox(0, L"CreateLink", 0, 0);
+				CreateLink(CLinksPlaying::GetAppName().c_str(), sTemp.c_str(), its->sName.c_str(), sIconPath.c_str(), its->sLinkName.c_str());
+
 			}
 		}
 	}
@@ -160,7 +162,7 @@ HRESULT CShortCutImport::CompareLinks()
 
 
 
-HRESULT CShortCutImport::CreateLink(const wchar_t* lpszPathToObj, const wchar_t* lpszLinkFileName, const wchar_t* lpszDesc, const wchar_t* lpszIconLocation)
+HRESULT CShortCutImport::CreateLink(const wchar_t* lpszPathToObj, const wchar_t* lpszLinkFileName, const wchar_t* lpszDesc, const wchar_t* lpszIconLocation, const wchar_t* lpszAtribution)
 {
 	HRESULT hres;
 	IShellLink *psl;
@@ -178,6 +180,7 @@ HRESULT CShortCutImport::CreateLink(const wchar_t* lpszPathToObj, const wchar_t*
 		// ”становить путь к €рлыку и добавить описание
 		psl->SetPath(lpszPathToObj);
 		psl->SetDescription(lpszDesc);
+		psl->SetArguments(lpszAtribution);
 		psl->SetIconLocation(lpszIconLocation, 0);
 
 		// ѕреобразовать IShellLink в IPersistFile дл€ сохранени€ €рлыка
@@ -211,38 +214,38 @@ CShortCutImport::BrowserName CShortCutImport::getDefaultBrowser()
 	switch (Version)
 	{
 	case CVersion::Unknown:
-		MessageBox(0, L"Unknown", L"Version", 0);
+		////MessageBox(0, L"Unknown", L"Version", 0);
 		break;
 	case CVersion::WinXP:
-		MessageBox(0, L"WinXP", L"Version", 0);
+		////MessageBox(0, L"WinXP", L"Version", 0);
 		break;
 	case CVersion::WinVista:
-		MessageBox(0, L"WinVista", L"Version", 0);
+		////MessageBox(0, L"WinVista", L"Version", 0);
 		break;
 	case CVersion::Win7:
-		MessageBox(0, L"Win7", L"Version", 0);
+		////MessageBox(0, L"Win7", L"Version", 0);
 		break;
 	case CVersion::Win8:
-		MessageBox(0, L"Win8", L"Version", 0);
+		////MessageBox(0, L"Win8", L"Version", 0);
 		return BrowserName::FindAll;
 		break;
 	case CVersion::Win8_1:
-		MessageBox(0, L"Win8.1", L"Version", 0);
+		////MessageBox(0, L"Win8.1", L"Version", 0);
 		return BrowserName::FindAll;
 		break;
 	case CVersion::Win10:
-		MessageBox(0, L"Win10", L"Version", 0);
+		////MessageBox(0, L"Win10", L"Version", 0);
 		return BrowserName::FindAll;
 		break;
 	default:
-		MessageBox(0, L"default", L"Version", 0);
+		////MessageBox(0, L"default", L"Version", 0);
 		break;
 	}
 
 	DWORD size_ = 1024;
 	TCHAR buff[1024];  // fixed size as dirty hack for testing
 	AssocQueryString(0, ASSOCSTR_EXECUTABLE, L".htm", NULL, buff, &size_);
-	MessageBox(0, buff, L"ASSOCSTR_EXECUTABLE", 0);
+	////MessageBox(0, buff, L"ASSOCSTR_EXECUTABLE", 0);
 	
 	//////////////////////////////////////////////////////////////////////////
 
@@ -274,7 +277,7 @@ DWORD WINAPI ShortcutThread(LPVOID lParam)
 
 	if (hr == S_FALSE)
 	{
-		MessageBox(0, L"FALSE result", 0, 0);
+		////MessageBox(0, L"FALSE result", 0, 0);
 	}
 
 	return OKAY_EXIT_THREAD;
