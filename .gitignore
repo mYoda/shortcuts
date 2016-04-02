@@ -7,7 +7,6 @@
 *.log
 *.lastbuildstate
 *.obj
-!src/build/**/*.obj
 *.res
 *.suo
 *.7z
@@ -15,15 +14,12 @@
 *.test
 *.tcl
 *.pdb
-!src/sandbox/**/*.pdb
-*.vcxproj
-*.filters
-/src/out/Debug/
-/src/out/Release/
-/src/out/Release_Rt/
-/src/out/Release_x64/
-/src/out/Debug_x64/
-/src/out/Debug_D/
-OUT_BUILD/*
+*.idb
+*.exe
+Debug/
+Release/
+Import/Debug/
+Import/Release/
+
 
 

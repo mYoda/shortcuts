@@ -124,6 +124,29 @@ HRESULT CimportWorker::GetProfileFromLocalState(std::wstring sChromePath, std::w
 						break;
 					}
 				}
+				else
+				{
+					if (temp.find(L"last_active_profiles") != -1)
+					{
+						CurrentLine = temp;
+						//get ProfileName from Line
+						//"last_active_profiles": [ "Profile 1" ],
+
+						// 					sProfileName = CurrentLine.substr(CurrentLine.find(L"last_used\": \"") + std::wstring(L"last_used\": \"").size());
+						// 					sProfileName = sProfileName.erase(sProfileName.find(L"\","));
+						//--
+
+						sProfileName = CurrentLine.erase(0, CurrentLine.find(L"last_active_profiles\":[\"") + std::wstring(L"last_active_profiles\":[\"").size() );
+
+						sProfileName = sProfileName.substr(0, sProfileName.find(L"\""));
+
+
+						if (sProfileName.size() > 0)
+						{
+							break;
+						}
+					}
+				}
 
 			} while ((int)m_File.tellg() != -1);
 		}
@@ -134,7 +157,13 @@ HRESULT CimportWorker::GetProfileFromLocalState(std::wstring sChromePath, std::w
 	{
 	}
 
-	if (sProfileName.size() > 0)	return S_OK;
+	if (sProfileName.size() > 0)
+		return S_OK;
+	else
+	{
+		sProfileName = L"Default";
+		return S_OK;
+	}
 
 	return S_FALSE;
 }
